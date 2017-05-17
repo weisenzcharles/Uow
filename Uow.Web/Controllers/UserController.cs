@@ -31,12 +31,32 @@ namespace Uow.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 使用 UnitOfWork 的添加数据。
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Add()
         {
             User user = new User();
-            user.Name = "zhang" + DateTime.Now.Millisecond;
+            user.Name = "user" + DateTime.Now.Millisecond;
             user.Password = "password" + DateTime.Now.Millisecond;
             _userService.Add(user);
+            _unitOfWork.SaveChanges();
+            return View();
+        }
+
+        /// <summary>
+        /// 使用 UnitOfWork 的更新数据。
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Update()
+        {
+            User user = new User();
+            user.Id = 1;
+            user.Name = "user" + DateTime.Now.Millisecond;
+            user.Password = "password" + DateTime.Now.Millisecond;
+            var userRepository = _unitOfWork.RepositoryAsync<User>();
+            userRepository.Update(user);
             _unitOfWork.SaveChanges();
             return View();
         }
