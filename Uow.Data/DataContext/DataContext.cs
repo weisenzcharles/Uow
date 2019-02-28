@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Uow.Core.Domain.DataContext;
@@ -20,7 +19,7 @@ namespace Uow.Data.DataContext
         #region Private Fields
 
         private readonly Guid _instanceId;
-        bool _disposed;
+        private bool _disposed;
 
         #endregion Private Fields
 
@@ -31,8 +30,28 @@ namespace Uow.Data.DataContext
         public DataContext(string nameOrConnectionString) : base(nameOrConnectionString)
         {
             _instanceId = Guid.NewGuid();
-            Configuration.LazyLoadingEnabled = false;
-            Configuration.ProxyCreationEnabled = false;
+            Configure();
+        }
+
+        /// <summary>
+        /// 通过现有连接来连接到数据库以构造一个新的上下文实例。
+        /// 如果 contextOwnsConnection 是 false，则释放上下文时将不会释放该连接。
+        /// </summary>
+        /// <param name="existingConnection">要用于新的上下文的现有连接。</param>
+        /// <param name="contextOwnsConnection">如果设置为 true，则释放上下文时将释放该连接；否则调用方必须释放该连接。</param>
+        public DataContext(DbConnection nameOrConnectionString, bool contextOwnsConnection) : base(nameOrConnectionString, contextOwnsConnection)
+        {
+            _instanceId = Guid.NewGuid();
+            Configure();
+        }
+
+        /// <summary>
+        /// 配置数据库访问设置。
+        /// </summary>
+        private void Configure()
+        {
+            Configuration.ProxyCreationEnabled = true;
+            Configuration.LazyLoadingEnabled = true;
         }
 
         public Guid InstanceId { get { return _instanceId; } }
@@ -86,13 +105,14 @@ namespace Uow.Data.DataContext
         ///     Some error occurred attempting to process entities in the context either
         ///     before or after sending commands to the database.</exception>
         /// <seealso cref="DbContext.SaveChangesAsync"/>
-        /// <returns>A task that represents the asynchronous save operation.  The 
-        ///     <see cref="Task.Result">Task.Result</see> contains the number of 
+        /// <returns>A task that represents the asynchronous save operation.  The
+        ///     <see cref="Task.Result">Task.Result</see> contains the number of
         ///     objects written to the underlying database.</returns>
         public override async Task<int> SaveChangesAsync()
         {
             return await this.SaveChangesAsync(CancellationToken.None);
         }
+
         /// <summary>
         ///     Asynchronously saves all changes made in this context to the underlying database.
         /// </summary>
@@ -113,8 +133,8 @@ namespace Uow.Data.DataContext
         ///     Some error occurred attempting to process entities in the context either
         ///     before or after sending commands to the database.</exception>
         /// <seealso cref="DbContext.SaveChangesAsync"/>
-        /// <returns>A task that represents the asynchronous save operation.  The 
-        ///     <see cref="Task.Result">Task.Result</see> contains the number of 
+        /// <returns>A task that represents the asynchronous save operation.  The
+        ///     <see cref="Task.Result">Task.Result</see> contains the number of
         ///     objects written to the underlying database.</returns>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
@@ -160,7 +180,6 @@ namespace Uow.Data.DataContext
             //entity is already loaded
             return alreadyAttached;
         }
-
 
         /// <summary>
         /// 从对象上下文移除对象。
