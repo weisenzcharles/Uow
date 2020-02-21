@@ -1,0 +1,25 @@
+﻿@using Uow.Entities;
+@{
+    ViewBag.Title = "User Index";
+}
+@*<h2>@ViewBag.Title.</h2>
+    <h3>@ViewBag.Message</h3>*@
+@*<table class="table table-bordered table-hover" cellspacing="0" cellpadding="0" border="0" style="min-width: 840px;">
+    <tbody class="success">*@
+<div>
+    @foreach (var item in ViewData["users"] as List<User>)
+    {
+        <p>
+            <span class="is-leaf"> @item.Id </span>
+        </p>
+        <p>
+            <span class="is-leaf"> @item.Name </span>
+        </p>
+        <p>
+            <span class="is-leaf"> @item.Password </span>
+        </p>
+    }
+</div>
+@*</tbody>
+    </table>*@
+
