@@ -7,8 +7,8 @@
     <ProjectGuid>{71EA33A7-B53E-4558-A5F1-8EB22AB86C46}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Uow.Entities</RootNamespace>
-    <AssemblyName>Uow.Entities</AssemblyName>
+    <RootNamespace>Uow.Domain</RootNamespace>
+    <AssemblyName>Uow.Domain</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="User.cs" />
+    <Compile Include="UserDomain.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Uow.Core\Uow.Core.csproj">

@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Uow.Core.Domain.Repositories;
 using Uow.Core.Domain.Uow;
-using Uow.Entities;
+using Uow.Domain;
 using Uow.Services;
 
 namespace Uow.Web.Controllers
@@ -25,7 +25,7 @@ namespace Uow.Web.Controllers
         // GET: User
         public ActionResult Index()
         {
-            IList<User> users = new List<User>();
+            IList<UserDomain> users = new List<UserDomain>();
             users = _userService.GetUsers();
             ViewData["users"] = users;
             return View();
@@ -37,7 +37,7 @@ namespace Uow.Web.Controllers
         /// <returns></returns>
         public ActionResult Add()
         {
-            User user = new User();
+            UserDomain user = new UserDomain();
             user.Name = "user" + DateTime.Now.Millisecond;
             user.Password = "password" + DateTime.Now.Millisecond;
             _userService.Add(user);
@@ -51,11 +51,11 @@ namespace Uow.Web.Controllers
         /// <returns></returns>
         public ActionResult Update()
         {
-            User user = new User();
+            UserDomain user = new UserDomain();
             user.Id = 1;
             user.Name = "user" + DateTime.Now.Millisecond;
             user.Password = "password" + DateTime.Now.Millisecond;
-            var userRepository = _unitOfWork.RepositoryAsync<User>();
+            var userRepository = _unitOfWork.RepositoryAsync<UserDomain>();
             userRepository.Update(user);
             _unitOfWork.SaveChanges();
             return View();

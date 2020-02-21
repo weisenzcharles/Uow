@@ -4,11 +4,11 @@ using System.Data.Entity.ModelConfiguration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Uow.Entities;
+using Uow.Domain;
 
 namespace Uow.Data.Mapping
 {
-    public class UserMap: EntityTypeConfiguration<User>
+    public class UserMap: EntityTypeConfiguration<UserDomain>
     {
         public UserMap()
         {

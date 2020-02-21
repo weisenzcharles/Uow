@@ -4,31 +4,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Uow.Core.Domain.Repositories;
-using Uow.Entities;
+using Uow.Domain;
 
 namespace Uow.Repositories
 {
     public class UserRepository : IUserRepository
     {
 
-        private readonly IRepositoryAsync<User> _repository;
+        private readonly IRepositoryAsync<UserDomain> _repository;
 
         /// <summary>
         /// 初始化 <see cref="UserRepository"/> 类的新实例。
         /// </summary>
-        public UserRepository(IRepositoryAsync<User> userRepository)
+        public UserRepository(IRepositoryAsync<UserDomain> userRepository)
         {
             _repository = userRepository;
         }
 
-        public void Add(User user)
+        public void Add(UserDomain user)
         {
             _repository.Insert(user);
         }
 
-        public IList<User> GetUsers()
+        public IList<UserDomain> GetUsers()
         {
-            IList<User> users = new List<User>();
+            IList<UserDomain> users = new List<UserDomain>();
             users = _repository.Queryable(false).ToList();
             return users;
         }

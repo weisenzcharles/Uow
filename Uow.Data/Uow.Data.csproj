@@ -87,9 +87,9 @@
       <Project>{39B6DC2E-D525-48B8-AD03-D09F9D969F03}</Project>
       <Name>Uow.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Uow.Entities\Uow.Entities.csproj">
-      <Project>{71EA33A7-B53E-4558-A5F1-8EB22AB86C46}</Project>
-      <Name>Uow.Entities</Name>
+    <ProjectReference Include="..\Uow.Entities\Uow.Domain.csproj">
+      <Project>{71ea33a7-b53e-4558-a5f1-8eb22ab86c46}</Project>
+      <Name>Uow.Domain</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,7 @@ using Uow.Core.Collections.Extensions;
 
 namespace Uow.Core.AutoMapper
 {
-    public class AutoMapAttribute : AutoMapAttributeBase
+    public sealed class AutoMapAttribute : AutoMapAttributeBase
     {
         public AutoMapAttribute(params Type[] targetTypes)
             : base(targetTypes)

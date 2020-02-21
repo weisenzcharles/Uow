@@ -4,27 +4,27 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Uow.Core.Domain.Repositories;
-using Uow.Entities;
+using Uow.Domain;
 namespace Uow.Web.Controllers
 {
     public class HomeController : Controller
     {
 
-        private readonly IRepositoryAsync<User> _repository;
+        private readonly IRepositoryAsync<UserDomain> _repository;
 
         //public HomeController()
         //{
 
         //}
 
-        public HomeController(IRepositoryAsync<User> userRepository)
+        public HomeController(IRepositoryAsync<UserDomain> userRepository)
         {
             _repository = userRepository;
         }
 
         public ActionResult Index()
         {
-            List<User> users = new List<User>();
+            List<UserDomain> users = new List<UserDomain>();
             users = _repository.Queryable(false).ToList();
 
             return View();

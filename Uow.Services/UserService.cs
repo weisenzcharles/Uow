@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Uow.Entities;
+using Uow.Domain;
 using Uow.Repositories;
 
 namespace Uow.Services
@@ -18,12 +18,12 @@ namespace Uow.Services
             _userRepository = userRepository;
         }
 
-        public void Add(User user)
+        public void Add(UserDomain user)
         {
             _userRepository.Add(user);
         }
 
-        public IList<User> GetUsers()
+        public IList<UserDomain> GetUsers()
         {
             return _userRepository.GetUsers();
         }

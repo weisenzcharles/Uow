@@ -18,7 +18,7 @@
     <AssemblyName>Uow.Web</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -257,9 +257,9 @@
       <Project>{39B6DC2E-D525-48B8-AD03-D09F9D969F03}</Project>
       <Name>Uow.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Uow.Entities\Uow.Entities.csproj">
+    <ProjectReference Include="..\Uow.Entities\Uow.Domain.csproj">
       <Project>{71ea33a7-b53e-4558-a5f1-8eb22ab86c46}</Project>
-      <Name>Uow.Entities</Name>
+      <Name>Uow.Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\Uow.Services\Uow.Services.csproj">
       <Project>{0dcd268a-31dc-4bd3-874d-93be9befec7a}</Project>
@@ -301,7 +301,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>13582</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:8086</IISUrl>
+          <IISUrl>http://localhost:13582/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

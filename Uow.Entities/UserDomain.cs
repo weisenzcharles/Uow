@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Uow.Core.Domain.Entities;
 
-namespace Uow.Entities
+namespace Uow.Domain
 {
-    public class User: EntityBase
+    public class UserDomain: EntityBase
     {
 
         public int Id { get; set; }

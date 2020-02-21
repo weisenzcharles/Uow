@@ -48,9 +48,9 @@
     <Folder Include="Tasks\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Uow.Entities\Uow.Entities.csproj">
-      <Project>{71EA33A7-B53E-4558-A5F1-8EB22AB86C46}</Project>
-      <Name>Uow.Entities</Name>
+    <ProjectReference Include="..\Uow.Entities\Uow.Domain.csproj">
+      <Project>{71ea33a7-b53e-4558-a5f1-8eb22ab86c46}</Project>
+      <Name>Uow.Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\Uow.Repositories\Uow.Repositories.csproj">
       <Project>{1E3C93D5-1E26-48EA-AD55-017A1D1B779E}</Project>
