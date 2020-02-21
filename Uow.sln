@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uow.Services", "Uow.Service
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uow.Web", "Uow.Web\Uow.Web.csproj", "{7B2D5FA9-3DDA-49C5-A0DE-A5E1C13E7996}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uow.Domain", "Uow.Entities\Uow.Domain.csproj", "{71EA33A7-B53E-4558-A5F1-8EB22AB86C46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uow.Domain", "Uow.Domain\Uow.Domain.csproj", "{71EA33A7-B53E-4558-A5F1-8EB22AB86C46}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uow.Web.Framework", "Uow.Web.Framework\Uow.Web.Framework.csproj", "{32853F5E-C599-4E6C-9DD0-C0A13D5CFFCA}"
 EndProject

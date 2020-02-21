@@ -5,7 +5,7 @@
 /.vs
 /Uow.Core/obj/Release
 /Uow.Data/obj/Release
-/Uow.Entities/obj/Release
+/Uow.Domain/obj/Release
 /Uow.Services/obj/Release
 /Uow.Web/obj/Release
 /Uow.Web.Framework/obj/Release
@@ -13,14 +13,14 @@
 /Uow.Data/bin/
 /Uow.Web/bin/
 /Uow.Services/bin/
-/Uow.Entities/bin/
+/Uow.Domain/bin/
 /Uow.Core/bin/
 /Uow.Repositories/bin/
 /Uow.Web.Framework/bin/
 /Uow.Data/obj/
 /Uow.Web/obj/
 /Uow.Services/obj/
-/Uow.Entities/obj/
+/Uow.Domain/obj/
 /Uow.Core/obj/
 /Uow.Repositories/obj/
 /Uow.Web.Framework/obj/
