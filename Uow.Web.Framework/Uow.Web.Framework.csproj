@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Uow.Web.Framework</RootNamespace>
     <AssemblyName>Uow.Web.Framework</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -81,7 +82,7 @@
       <Project>{D3798EF7-14AB-4BBD-AB56-64365EAAC144}</Project>
       <Name>Uow.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Uow.Entities\Uow.Domain.csproj">
+    <ProjectReference Include="..\Uow.Domain\Uow.Domain.csproj">
       <Project>{71ea33a7-b53e-4558-a5f1-8eb22ab86c46}</Project>
       <Name>Uow.Domain</Name>
     </ProjectReference>
