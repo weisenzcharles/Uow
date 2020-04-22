@@ -12,8 +12,12 @@ namespace Uow.Core.Domain.Entities
     [Serializable]
     public abstract class Entity : Entity<int>, IEntity
     {
-
+        /// <summary>
+        /// Unique identifier for this entity.
+        /// </summary>
+        public new int Id { get; set; }
     }
+
 
     /// <summary>
     /// Basic implementation of IEntity interface.
@@ -23,10 +27,26 @@ namespace Uow.Core.Domain.Entities
     [Serializable]
     public abstract class Entity<TPrimaryKey> : IEntity<TPrimaryKey>
     {
+
+        public Entity()
+        {
+            CreatedTime = DateTime.Now;
+        }
+
+        /// <summary>
+        /// created time。
+        /// </summary>
+        public DateTime CreatedTime { get; set; }
+
+        /// <summary>
+        /// created user。
+        /// </summary>
+        public int CreatedUser { get; set; }
+
         /// <summary>
         /// Unique identifier for this entity.
         /// </summary>
-        public virtual TPrimaryKey Id { get; set; }
+        public TPrimaryKey Id { get; set; }
 
         /// <summary>
         /// Checks if this entity is transient (it has not an Id).
@@ -34,7 +54,7 @@ namespace Uow.Core.Domain.Entities
         /// <returns>True, if this entity is transient</returns>
         public virtual bool IsTransient()
         {
-            if (EqualityComparer<TPrimaryKey>.Default.Equals(Id, default(TPrimaryKey)))
+            if (EqualityComparer<TPrimaryKey>.Default.Equals(Id, default))
             {
                 return true;
             }
@@ -100,7 +120,7 @@ namespace Uow.Core.Domain.Entities
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return HashCode.Combine(Id);
         }
 
         /// <inheritdoc/>
