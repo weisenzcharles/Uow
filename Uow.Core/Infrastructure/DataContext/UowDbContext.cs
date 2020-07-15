@@ -10,21 +10,21 @@ using System.Threading.Tasks;
 
 namespace Uow.Core.Domain.DataContext
 {
-    public class BaseDbContext : DbContext, IDbContext
+    public class UowDbContext : DbContext, IDbContext
     {
 
         /// <summary>
-        /// Initializes a new instance of the <seealso cref="BaseDbContext"/> class.
+        /// Initializes a new instance of the <seealso cref="UowDbContext"/> class.
         /// </summary>
-        protected BaseDbContext()
+        protected UowDbContext()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <seealso cref="BaseDbContext"/> class.
+        /// Initializes a new instance of the <seealso cref="UowDbContext"/> class.
         /// </summary>
         /// <param name="options">The options for this context.</param>
-        public BaseDbContext(DbContextOptions options) : base(options)
+        public UowDbContext(DbContextOptions options) : base(options)
         {
         }
 

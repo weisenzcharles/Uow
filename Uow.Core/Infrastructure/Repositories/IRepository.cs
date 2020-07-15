@@ -309,20 +309,22 @@ namespace Uow.Core.Domain.Repositories
 
         #region Method...
 
-        /// <summary>
-        /// Changes the table name. This require the tables in the same database.
-        /// </summary>
-        /// <param name="table">Table name.</param>
-        /// <remarks>
-        /// This only been used for supporting multiple tables in the same model. This require the tables in the same database.
-        /// </remarks>
-        void ChangeTable(string table);
+        ///// <summary>
+        ///// Changes the table name. This require the tables in the same database.
+        ///// </summary>
+        ///// <param name="table">Table name.</param>
+        ///// <remarks>
+        ///// This only been used for supporting multiple tables in the same model. This require the tables in the same database.
+        ///// </remarks>
+        //void ChangeTable(string table);
 
         #endregion
 
         #region SaveChanges...
 
         int SaveChanges();
+
+        Task<int> SaveChangesAsync();
 
         #endregion
 

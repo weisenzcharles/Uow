@@ -21,39 +21,9 @@ namespace Uow.Core.Domain.UnitOfWork
         /// <returns>The instance of type <see cref="IDbConnection"/>.</returns>
         IDbConnection DbConnection { get; }
 
-        #region EF Core...
-
-        /// <summary>
-        /// Executes the specified raw SQL command.
-        /// </summary>
-        /// <param name="sql">The raw SQL.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>The number of state entities written to database.</returns>
-        int ExecuteSqlCommand(string sql, params object[] parameters);
-
-        /// <summary>
-        /// Uses raw SQL queries to fetch the specified <typeparamref name="TEntity"/> data.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="sql">The raw SQL.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>An <see cref="IQueryable{T}"/> that contains elements that satisfy the condition specified by raw SQL.</returns>
-        IQueryable<TEntity> FromSql<TEntity>(string sql, params object[] parameters) where TEntity : class;
-
-        #endregion
-
         #region Dapper...
 
         #region Command Sql...
-
-        ///// <summary>
-        ///// Query
-        ///// ag:await _unitOfWork.Query`Demo`("select id,name from school where id = @id", new { id = 1 });
-        ///// </summary>
-        ///// <typeparam name="TEntity"></typeparam>
-        ///// <param name="sql">sql语句</param>
-        ///// <returns></returns>
-        //IEnumerable<TEntity> Query<TEntity>(string sql, object param = null) where TEntity : class;
 
         /// <summary>
         /// Query
@@ -89,6 +59,8 @@ namespace Uow.Core.Domain.UnitOfWork
 
         #endregion
 
+        #region Async...
+
         Task<IEnumerable<TReturn>> QueryAsync<TFirst, TSecond, TThird, TReturn>(string sql, Func<TFirst, TSecond, TThird, TReturn> map, object param = null, IDbTransaction transaction = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null);
 
         Task<IEnumerable<TReturn>> QueryAsync<TFirst, TSecond, TThird, TReturn>(CommandDefinition command, Func<TFirst, TSecond, TThird, TReturn> map, string splitOn = "Id");
@@ -98,6 +70,9 @@ namespace Uow.Core.Domain.UnitOfWork
         Task<(IEnumerable<TReturn> list, int totalCount)> GetPageListAsync<TReturn>(string sql, int pageIndex, int pageSize, DynamicParameters param, Func<string, Task<IEnumerable<TReturn>>> queryfuncAsync);
 
         Task<(IEnumerable<TReturn> list, int totalCount)> GetPageListAsync<TReturn>(StringBuilder sqlColumns, StringBuilder sqlFrom, StringBuilder sqlJoin, StringBuilder sqlWhere, StringBuilder sqlOrderBy, int pageIndex, int pageSize, DynamicParameters param, Func<string, Task<IEnumerable<TReturn>>> queryfuncAsync);
+
+        #endregion
+
         #endregion
 
         #region SaveChanges...
@@ -125,7 +100,7 @@ namespace Uow.Core.Domain.UnitOfWork
 
         #endregion
 
-        #region GetRepository...
+        #region Repository Factory...
 
         /// <summary>
         /// Gets the specified repository for the <typeparamref name="TEntity"/>.
@@ -137,9 +112,16 @@ namespace Uow.Core.Domain.UnitOfWork
 
         #endregion
 
-        #region Async...
+        #region Entity Framework...
 
-        #region EF Core...
+        /// <summary>
+        /// Executes the specified raw SQL command.
+        /// </summary>
+        /// <param name="sql">The raw SQL.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>The number of state entities written to database.</returns>
+        int ExecuteSqlCommand(string sql, params object[] parameters);
+
         /// <summary>
         /// Executes the specified raw SQL command.
         /// </summary>
@@ -147,6 +129,16 @@ namespace Uow.Core.Domain.UnitOfWork
         /// <param name="parameters">The parameters.</param>
         /// <returns>The number of state entities written to database.</returns>
         Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters);
+
+        /// <summary>
+        /// Uses raw SQL queries to fetch the specified <typeparamref name="TEntity"/> data.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="sql">The raw SQL.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>An <see cref="IQueryable{T}"/> that contains elements that satisfy the condition specified by raw SQL.</returns>
+        IQueryable<TEntity> FromSql<TEntity>(string sql, params object[] parameters) where TEntity : class;
+
 
         #endregion
 
@@ -204,8 +196,6 @@ namespace Uow.Core.Domain.UnitOfWork
         #region Transaction...
 
         Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
-
-        #endregion
 
         #endregion
 

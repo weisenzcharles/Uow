@@ -130,13 +130,13 @@ namespace Uow.Repositories.Test
         /// <typeparam name="TRepository">The type of the custom repositry.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
         /// <returns>The same service collection so that multiple calls can be chained.</returns>
-        public static IServiceCollection AddCustomRepositoryAsync<TEntity, TRepository>(this IServiceCollection services)
-            where TEntity : class, IEntity
-            where TRepository : class, IRepositoryAsync<TEntity>
-        {
-            services.AddScoped<IRepositoryAsync<TEntity>, TRepository>();
+        //public static IServiceCollection AddCustomRepositoryAsync<TEntity, TRepository>(this IServiceCollection services)
+        //    where TEntity : class, IEntity
+        //    where TRepository : class, IRepositoryAsync<TEntity>
+        //{
+        //    services.AddScoped<IRepositoryAsync<TEntity>, TRepository>();
 
-            return services;
-        }
+        //    return services;
+        //}
     }
 }

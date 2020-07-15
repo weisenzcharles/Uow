@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+
 
 namespace Uow.Core.Domain.Entities
 {
@@ -12,12 +11,8 @@ namespace Uow.Core.Domain.Entities
     [Serializable]
     public abstract class Entity : Entity<int>, IEntity
     {
-        /// <summary>
-        /// Unique identifier for this entity.
-        /// </summary>
-        public new int Id { get; set; }
-    }
 
+    }
 
     /// <summary>
     /// Basic implementation of IEntity interface.
@@ -27,26 +22,10 @@ namespace Uow.Core.Domain.Entities
     [Serializable]
     public abstract class Entity<TPrimaryKey> : IEntity<TPrimaryKey>
     {
-
-        public Entity()
-        {
-            CreatedTime = DateTime.Now;
-        }
-
-        /// <summary>
-        /// created time。
-        /// </summary>
-        public DateTime CreatedTime { get; set; }
-
-        /// <summary>
-        /// created user。
-        /// </summary>
-        public int CreatedUser { get; set; }
-
         /// <summary>
         /// Unique identifier for this entity.
         /// </summary>
-        public TPrimaryKey Id { get; set; }
+        public virtual TPrimaryKey Id { get; set; }
 
         /// <summary>
         /// Checks if this entity is transient (it has not an Id).
@@ -54,7 +33,7 @@ namespace Uow.Core.Domain.Entities
         /// <returns>True, if this entity is transient</returns>
         public virtual bool IsTransient()
         {
-            if (EqualityComparer<TPrimaryKey>.Default.Equals(Id, default))
+            if (EqualityComparer<TPrimaryKey>.Default.Equals(Id, default(TPrimaryKey)))
             {
                 return true;
             }
@@ -74,7 +53,7 @@ namespace Uow.Core.Domain.Entities
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object obj)
+        public virtual bool EntityEquals(object obj)
         {
             if (obj == null || !(obj is Entity<TPrimaryKey>))
             {
@@ -97,50 +76,14 @@ namespace Uow.Core.Domain.Entities
             //Must have a IS-A relation of types or must be same type
             var typeOfThis = GetType();
             var typeOfOther = other.GetType();
-            if (!typeOfThis.IsAssignableFrom(typeOfOther) && !typeOfOther.IsAssignableFrom(typeOfThis))
+            if (!typeOfThis.GetTypeInfo().IsAssignableFrom(typeOfOther) && !typeOfOther.GetTypeInfo().IsAssignableFrom(typeOfThis))
             {
                 return false;
             }
 
-            //if (this is IMayHaveTenant && other is IMayHaveTenant &&
-            //    this.As<IMayHaveTenant>().TenantId != other.As<IMayHaveTenant>().TenantId)
-            //{
-            //    return false;
-            //}
-
-            //if (this is IMustHaveTenant && other is IMustHaveTenant &&
-            //    this.As<IMustHaveTenant>().TenantId != other.As<IMustHaveTenant>().TenantId)
-            //{
-            //    return false;
-            //}
-
             return Id.Equals(other.Id);
         }
-
-        /// <inheritdoc/>
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id);
-        }
-
-        /// <inheritdoc/>
-        public static bool operator ==(Entity<TPrimaryKey> left, Entity<TPrimaryKey> right)
-        {
-            if (Equals(left, null))
-            {
-                return Equals(right, null);
-            }
-
-            return left.Equals(right);
-        }
-
-        /// <inheritdoc/>
-        public static bool operator !=(Entity<TPrimaryKey> left, Entity<TPrimaryKey> right)
-        {
-            return !(left == right);
-        }
-
-        /// <inheritdoc/>
+     
         public override string ToString()
         {
             return $"[{GetType().Name} {Id}]";

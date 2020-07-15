@@ -132,3 +132,7 @@ Uow.Test/obj/Debug/netcoreapp3.1/Uow.Test.AssemblyInfo.cs
 Uow.Test/obj/Debug/netcoreapp3.1/Uow.Test.AssemblyInfoInputs.cache
 Uow.Test/obj/Debug/netcoreapp3.1/Uow.Test.assets.cache
 Uow.Test/obj/Debug/netcoreapp3.1/Uow.Test.csprojAssemblyReference.cache
+Uow.Repositories.Test/bin/
+Uow.Repositories.Test/obj/
+Uow.Test/bin/
+Uow.Test/obj/

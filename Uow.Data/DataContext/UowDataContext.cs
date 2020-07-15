@@ -15,7 +15,7 @@ using System.Threading;
 
 namespace Open.Data.DataContext
 {
-    public class UowDataContext : BaseDbContext, IDbContext
+    public class UowDataContext : UowDbContext, IDbContext
     {
         #region Fields...
 

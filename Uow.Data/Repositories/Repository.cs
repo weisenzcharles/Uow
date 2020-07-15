@@ -21,7 +21,7 @@ namespace Open.Data.Repositories
     /// Represents a default generic repository implements the <see cref="IRepository{TEntity}"/> interface.
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
-    public class RepositoryBase<TEntity> : IRepositoryAsync<TEntity> where TEntity : class, IEntity
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
     {
         #region Fields...
 
@@ -33,34 +33,34 @@ namespace Open.Data.Repositories
         #region Constructors...
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RepositoryBase{TEntity}"/> class.
+        /// Initializes a new instance of the <see cref="Repository{TEntity}"/> class.
         /// </summary>
         /// <param name="dbContext">The database context.</param>
-        public RepositoryBase(IDbContext dbContext)
+        public Repository(IDbContext dbContext)
         {
             _context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         #endregion
 
-        #region ChangeTable...
+        //#region ChangeTable...
 
-        /// <summary>
-        /// Changes the table name. This require the tables in the same database.
-        /// </summary>
-        /// <param name="table"></param>
-        /// <remarks>
-        /// This only been used for supporting multiple tables in the same model. This require the tables in the same database.
-        /// </remarks>
-        public virtual void ChangeTable(string table)
-        {
-            if (_context.Model.FindEntityType(typeof(TEntity)) is IConventionEntityType relational)
-            {
-                relational.SetTableName(table);
-            }
-        }
+        ///// <summary>
+        ///// Changes the table name. This require the tables in the same database.
+        ///// </summary>
+        ///// <param name="table"></param>
+        ///// <remarks>
+        ///// This only been used for supporting multiple tables in the same model. This require the tables in the same database.
+        ///// </remarks>
+        //public virtual void ChangeTable(string table)
+        //{
+        //    if (_context.Model.FindEntityType(typeof(TEntity)) is IConventionEntityType relational)
+        //    {
+        //        relational.SetTableName(table);
+        //    }
+        //}
 
-        #endregion
+        //#endregion
 
         #region Properties
 

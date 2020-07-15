@@ -26,7 +26,7 @@ namespace Uow.Repositories.Test.User
             );
             services.AddUnitOfWork<UowDataContext>();
             services.AddCustomRepository<UserDomain, UserRepository>();
-            services.AddCustomRepositoryAsync<UserDomain, UserRepository>();
+            //services.AddCustomRepositoryAsync<UserDomain, UserRepository>();
 
             //services.AddScoped<IDbContext, UowDataContext>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -39,7 +39,7 @@ namespace Uow.Repositories.Test.User
         {
             var userRepository = _serviceProvider.GetService<IUserRepository>();
 
-            var user = userRepository.LongCount(c => c.CreatedUser == 164);
+            var user = userRepository.LongCount();
 
             Assert.Equal(8, user);
         }
@@ -58,15 +58,15 @@ namespace Uow.Repositories.Test.User
             Assert.True(user.Any());
         }
 
-        [Fact]
-        public async Task RepositoryGetByIdAsyncTest()
-        {
-            var repositoryAsync = _serviceProvider.GetService<IRepositoryAsync<UserDomain>>();
+        //[Fact]
+        //public async Task RepositoryGetByIdAsyncTest()
+        //{
+        //    var repositoryAsync = _serviceProvider.GetService<IRepository<UserDomain>>();
 
-            var c = await repositoryAsync.GetByIdAsync(10);
+        //    var c = await repositoryAsync.GetById(10);
 
-            Assert.Equal(10, c.Id);
-        }
+        //    Assert.Equal(10, c.Id);
+        //}
 
         [Fact]
         public void RepositoryFindTest()

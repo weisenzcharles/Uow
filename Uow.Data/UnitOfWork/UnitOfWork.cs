@@ -3,12 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
-using Uow.Core.Domain.Collections;
-using Uow.Core.Domain.DapperAdapter;
-using Uow.Core.Domain.DataContext;
-using Uow.Core.Domain.Entities;
-using Uow.Core.Domain.Repositories;
-using Uow.Core.Domain.UnitOfWork;
 using Open.Data.DataContext;
 using Open.Data.Repositories;
 using System;
@@ -19,6 +13,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using Uow.Core.Domain.Collections;
+using Uow.Core.Domain.DapperAdapter;
+using Uow.Core.Domain.DataContext;
+using Uow.Core.Domain.Entities;
+using Uow.Core.Domain.Repositories;
+using Uow.Core.Domain.UnitOfWork;
 
 namespace Open.Data.UnitOfWork
 {
@@ -186,12 +186,13 @@ namespace Open.Data.UnitOfWork
                 if (param == null)
                     param = new DynamicParameters();
                 param.Add("pageindex", (pageIndex - 1) * pageSize, System.Data.DbType.Int32);
-                param.Add("pagesize", pageSize, System.Data.DbType.Int32);
+                param.Add("pagesize", pageSize, DbType.Int32);
                 list = queryfunc(sqlPage.ToString());
             }
 
             return list;
         }
+
         /// <summary>
         /// 分页获取数据列表。
         /// </summary>
@@ -200,29 +201,26 @@ namespace Open.Data.UnitOfWork
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <param name="param"></param>
-        /// <param name="queryfuncAsync"></param>
+        /// <param name="queryFuncAsync"></param>
         /// <returns></returns>
-        public async Task<(IEnumerable<TReturn> list, int totalCount)> GetPageListAsync<TReturn>(string sql, int pageIndex, int pageSize, DynamicParameters param, Func<string, Task<IEnumerable<TReturn>>> queryfuncAsync)
+        public async Task<(IEnumerable<TReturn> list, int totalCount)> GetPageListAsync<TReturn>(string sql, int pageIndex, int pageSize, DynamicParameters param, Func<string, Task<IEnumerable<TReturn>>> queryFuncAsync)
         {
-            //StringBuilder sqlTempString = new StringBuilder("SELECT count(*) FROM ("+ sql + ") as tmp");
-            //StringBuilder sqlCount = new StringBuilder();
-            //sqlCount.AppendFormat(sqlTempString.ToString(), "count(*)", sql);
-            string sqlTotal = "SELECT count(*) FROM (" + sql + ") as tmp";
+            string sqlTotal = "SELECT COUNT(*) FROM (" + sql + ") as tmp";
             var totalCount = await DbConnection.ExecuteScalarAsync<int>(sqlTotal, param);
             IEnumerable<TReturn> list = null;
             if (totalCount > 0)
             {
                 StringBuilder sqlPage = new StringBuilder();
-                sqlPage.Append(sql).Append(" limit @pageindex,@pagesize ");
+                sqlPage.Append(sql).Append(" LIMIT @pageindex, @pagesize ");
                 if (param == null)
                     param = new DynamicParameters();
                 param.Add("pageindex", (pageIndex - 1) * pageSize, System.Data.DbType.Int32);
                 param.Add("pagesize", pageSize, DbType.Int32);
-                list = await queryfuncAsync(sqlPage.ToString());
+                list = await queryFuncAsync(sqlPage.ToString());
             }
-
             return (list, totalCount);
         }
+
         /// <summary>
         /// 分页获取数据列表。
         /// </summary>
@@ -235,9 +233,9 @@ namespace Open.Data.UnitOfWork
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <param name="param"></param>
-        /// <param name="queryfuncAsync"></param>
+        /// <param name="queryFuncAsync"></param>
         /// <returns></returns>
-        public async Task<(IEnumerable<TReturn> list, int totalCount)> GetPageListAsync<TReturn>(StringBuilder sqlColumns, StringBuilder sqlFrom, StringBuilder sqlJoin, StringBuilder sqlWhere, StringBuilder sqlOrderBy, int pageIndex, int pageSize, DynamicParameters param, Func<string, Task<IEnumerable<TReturn>>> queryfuncAsync)
+        public async Task<(IEnumerable<TReturn> list, int totalCount)> GetPageListAsync<TReturn>(StringBuilder sqlColumns, StringBuilder sqlFrom, StringBuilder sqlJoin, StringBuilder sqlWhere, StringBuilder sqlOrderBy, int pageIndex, int pageSize, DynamicParameters param, Func<string, Task<IEnumerable<TReturn>>> queryFuncAsync)
         {
             StringBuilder sqlTempString = new StringBuilder("SELECT {0} FROM {1} {2} where {3} {4}");
             StringBuilder sqlCount = new StringBuilder();
@@ -254,7 +252,7 @@ namespace Open.Data.UnitOfWork
                     param = new DynamicParameters();
                 param.Add("pageindex", (pageIndex - 1) * pageSize, System.Data.DbType.Int32);
                 param.Add("pagesize", pageSize, DbType.Int32);
-                list = await queryfuncAsync(sqlPage.ToString());
+                list = await queryFuncAsync(sqlPage.ToString());
             }
 
             return (list, totalCount);
@@ -262,7 +260,7 @@ namespace Open.Data.UnitOfWork
 
         #endregion
 
-        #region IUnitOfWork...
+        #region Entity Framework...
 
         /// <summary>
         /// Executes the specified raw SQL command.
@@ -280,10 +278,6 @@ namespace Open.Data.UnitOfWork
         /// <param name="parameters">The parameters.</param>
         /// <returns>An <see cref="IQueryable{T}" /> that contains elements that satisfy the condition specified by raw SQL.</returns>
         public IQueryable<TEntity> FromSql<TEntity>(string sql, params object[] parameters) where TEntity : class => _context.Set<TEntity>().FromSqlRaw(sql, parameters);
-
-        #endregion
-
-        #region IUnitOfWorkAsync...
 
         /// <summary>
         /// Executes the specified raw SQL command.
@@ -317,7 +311,7 @@ namespace Open.Data.UnitOfWork
 
         #endregion
 
-        #region IGenericRepositoryFactory...
+        #region Repository Factory...
 
         /// <summary>
         /// Gets the specified repository for the <typeparamref name="TEntity"/>.
@@ -345,36 +339,10 @@ namespace Open.Data.UnitOfWork
             var type = typeof(TEntity);
             if (!repositories.ContainsKey(type))
             {
-                repositories[type] = new RepositoryBase<TEntity>(_context);
+                repositories[type] = new Repository<TEntity>(_context);
             }
 
             return (IRepository<TEntity>)repositories[type];
-        }
-
-        IRepositoryAsync<TEntity> IRepositoryFactory.GetRepositoryAsync<TEntity>(bool hasCustomRepository)
-        {
-            if (repositories == null)
-            {
-                repositories = new Dictionary<Type, object>();
-            }
-
-            // what's the best way to support custom reposity?
-            if (hasCustomRepository)
-            {
-                var customRepository = _context.GetService<IRepositoryAsync<TEntity>>();
-                if (customRepository != null)
-                {
-                    return customRepository;
-                }
-            }
-
-            var type = typeof(TEntity);
-            if (!repositories.ContainsKey(type))
-            {
-                repositories[type] = new RepositoryBase<TEntity>(_context);
-            }
-
-            return (IRepositoryAsync<TEntity>)repositories[type];
         }
 
         #endregion
@@ -456,22 +424,22 @@ namespace Open.Data.UnitOfWork
 
         public IDbContextTransaction BeginTransaction()
         {
-            return _context.Database.BeginTransaction();
+            return _context.Database?.BeginTransaction();
         }
 
         public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
-            return _context.Database.BeginTransactionAsync(cancellationToken);
+            return _context?.Database?.BeginTransactionAsync(cancellationToken);
         }
 
         public void CommitTransaction()
         {
-            _context.Database.CommitTransaction();
+            _context?.Database?.CommitTransaction();
         }
 
         public void RollbackTransaction()
         {
-            _context.Database.RollbackTransaction();
+            _context?.Database?.RollbackTransaction();
         }
         #endregion
 
@@ -492,7 +460,7 @@ namespace Open.Data.UnitOfWork
             {
                 if (_context != null)
                 {
-                    _context.Dispose();
+                    _context?.Dispose();
                 }
             }
             _disposed = true;

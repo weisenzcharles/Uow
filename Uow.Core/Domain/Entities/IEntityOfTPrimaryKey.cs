@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Uow.Core.Domain.Entities
+﻿namespace Uow.Core.Domain.Entities
 {
     /// <summary>
     /// Defines interface for base entity type. All entities in the system must implement this interface.

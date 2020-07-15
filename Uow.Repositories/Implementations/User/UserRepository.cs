@@ -13,7 +13,7 @@ using Uow.Repositories.Interface.User;
 
 namespace Uow.Repositories.Implementations.User
 {
-    public class UserRepository : RepositoryBase<UserDomain>, IUserRepository
+    public class UserRepository : Repository<UserDomain>, IUserRepository
     {
         #region Fields...
 
@@ -72,7 +72,7 @@ namespace Uow.Repositories.Implementations.User
             {
                 query = query.Where(i => i.Name == userName);
             }
-            query = query.OrderByDescending(b => b.CreatedTime);
+            //query = query.OrderByDescending(b => b.CreatedTime);
             var totalRecords = query.Count();
             var dataList = await query.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
             if (dataList != null)
