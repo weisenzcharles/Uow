@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Uow.Core.Infrastructure;
 
 namespace Uow.Core.Domain.Entities
 {
     /// <summary>
-    /// 实体对象基础类。
+    ///     实体对象基础类。
     /// </summary>
     public class EntityBase : IObjectState
     {
@@ -21,14 +16,14 @@ namespace Uow.Core.Domain.Entities
         #region Properties...
 
         /// <summary>
-        /// 获取或设置实体对象唯一标识符。
+        ///     获取或设置实体对象唯一标识符。
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// 获取或设置实体对象的状态。
+        ///     获取或设置实体对象的状态。
         /// </summary>
-        [NotMapped]
+        //[NotMapped]
         public EntityState ObjectState { get; set; }
 
         #endregion
@@ -38,7 +33,7 @@ namespace Uow.Core.Domain.Entities
         #region Public Method...
 
         /// <summary>
-        /// 确定指定的实体对象是否相同。
+        ///     确定指定的实体对象是否相同。
         /// </summary>
         /// <param name="obj">指定的对象实例。</param>
         /// <returns>如果是相同的实例，或者如果二者都为 null，则为 true；否则为 false。</returns>
@@ -48,7 +43,7 @@ namespace Uow.Core.Domain.Entities
         }
 
         /// <summary>
-        /// 获取当前实体对象的类型。
+        ///     获取当前实体对象的类型。
         /// </summary>
         /// <returns>当前实体对象的类型。</returns>
         private Type GetUnproxiedType()
@@ -57,7 +52,7 @@ namespace Uow.Core.Domain.Entities
         }
 
         /// <summary>
-        /// 确定指定的对象实例是否是相同的实例。
+        ///     确定指定的对象实例是否是相同的实例。
         /// </summary>
         /// <param name="other">指定的对象实例。</param>
         /// <returns>如果是相同的实例，或者如果二者都为 null，则为 true；否则为 false。</returns>
@@ -76,14 +71,14 @@ namespace Uow.Core.Domain.Entities
                 var otherType = other.GetUnproxiedType();
                 var thisType = GetUnproxiedType();
                 return thisType.IsAssignableFrom(otherType) ||
-                        otherType.IsAssignableFrom(thisType);
+                       otherType.IsAssignableFrom(thisType);
             }
 
             return false;
         }
 
         /// <summary>
-        /// 获取对象的哈希编码。
+        ///     获取对象的哈希编码。
         /// </summary>
         /// <returns>哈希编码。</returns>
         public override int GetHashCode()
@@ -94,7 +89,7 @@ namespace Uow.Core.Domain.Entities
         }
 
         /// <summary>
-        /// 确定两个对象实例是否相等。
+        ///     确定两个对象实例是否相等。
         /// </summary>
         /// <param name="x">要比较的第一个对象实例。</param>
         /// <param name="y">要比较的第二个对象实例。</param>
@@ -105,7 +100,7 @@ namespace Uow.Core.Domain.Entities
         }
 
         /// <summary>
-        /// 确定两个对象实例是否不相等。
+        ///     确定两个对象实例是否不相等。
         /// </summary>
         /// <param name="x">要比较的第一个对象实例。</param>
         /// <param name="y">要比较的第二个对象实例。</param>
@@ -120,7 +115,7 @@ namespace Uow.Core.Domain.Entities
         #region Private Method...
 
         /// <summary>
-        /// 判断指定的对象是否是瞬时实例。
+        ///     判断指定的对象是否是瞬时实例。
         /// </summary>
         /// <param name="obj">指定的对象。</param>
         /// <returns>如果是，则为 true；否则为 false。</returns>

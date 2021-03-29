@@ -9,19 +9,16 @@ namespace Uow.Core.Fakes
     {
         private readonly HttpCookieCollection _cookies;
         private readonly NameValueCollection _formParams;
-        private readonly NameValueCollection _queryStringParams;
         private readonly NameValueCollection _headers;
-        private readonly NameValueCollection _serverVariables;
+        private readonly NameValueCollection _queryStringParams;
         private readonly string _relativeUrl;
-        private readonly Uri _url;
-        private readonly Uri _urlReferrer;
-        private readonly string _httpMethod;
+        private readonly NameValueCollection _serverVariables;
 
         public FakeHttpRequest(string relativeUrl, string method,
             NameValueCollection formParams, NameValueCollection queryStringParams,
             HttpCookieCollection cookies, NameValueCollection serverVariables)
         {
-            _httpMethod = method;
+            HttpMethod = method;
             _relativeUrl = relativeUrl;
             _formParams = formParams;
             _queryStringParams = queryStringParams;
@@ -45,8 +42,8 @@ namespace Uow.Core.Fakes
             HttpCookieCollection cookies, NameValueCollection serverVariables)
             : this(relativeUrl, method, formParams, queryStringParams, cookies, serverVariables)
         {
-            _url = url;
-            _urlReferrer = urlReferrer;
+            Url = url;
+            UrlReferrer = urlReferrer;
         }
 
         public FakeHttpRequest(string relativeUrl, Uri url, Uri urlReferrer)
@@ -54,59 +51,23 @@ namespace Uow.Core.Fakes
         {
         }
 
-        public override NameValueCollection ServerVariables
-        {
-            get
-            {
-                return _serverVariables;
-            }
-        }
+        public override NameValueCollection ServerVariables => _serverVariables;
 
-        public override NameValueCollection Form
-        {
-            get { return _formParams; }
-        }
+        public override NameValueCollection Form => _formParams;
 
-        public override NameValueCollection QueryString
-        {
-            get { return _queryStringParams; }
-        }
+        public override NameValueCollection QueryString => _queryStringParams;
 
-        public override NameValueCollection Headers
-        {
-            get { return _headers; }
-        }
+        public override NameValueCollection Headers => _headers;
 
-        public override HttpCookieCollection Cookies
-        {
-            get { return _cookies; }
-        }
+        public override HttpCookieCollection Cookies => _cookies;
 
-        public override string AppRelativeCurrentExecutionFilePath
-        {
-            get { return _relativeUrl; }
-        }
+        public override string AppRelativeCurrentExecutionFilePath => _relativeUrl;
 
-        public override Uri Url
-        {
-            get
-            {
-                return _url;
-            }
-        }
+        public override Uri Url { get; }
 
-        public override Uri UrlReferrer
-        {
-            get
-            {
-                return _urlReferrer;
-            }
-        }
+        public override Uri UrlReferrer { get; }
 
-        public override string PathInfo
-        {
-            get { return ""; }
-        }
+        public override string PathInfo => "";
 
         public override string ApplicationPath
         {
@@ -120,40 +81,16 @@ namespace Uow.Core.Fakes
             }
         }
 
-        public override string HttpMethod
-        {
-            get
-            {
-                return _httpMethod;
-            }
-        }
+        public override string HttpMethod { get; }
 
-        public override string UserHostAddress
-        {
-            get { return null; }
-        }
+        public override string UserHostAddress => null;
 
-        public override string RawUrl
-        {
-            get { return null; }
-        }
+        public override string RawUrl => null;
 
-        public override bool IsSecureConnection
-        {
-            get { return false; }
-        }
+        public override bool IsSecureConnection => false;
 
-        public override bool IsAuthenticated
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool IsAuthenticated => false;
 
-        public override string[] UserLanguages
-        {
-            get { return null; }
-        }
+        public override string[] UserLanguages => null;
     }
 }

@@ -1,9 +1,5 @@
-﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using AutoMapper;
 using Uow.Core.Collections.Extensions;
 
 namespace Uow.Core.AutoMapper
@@ -13,15 +9,11 @@ namespace Uow.Core.AutoMapper
         public AutoMapAttribute(params Type[] targetTypes)
             : base(targetTypes)
         {
-
         }
 
         public override void CreateMap(IMapperConfigurationExpression configuration, Type type)
         {
-            if (TargetTypes.IsNullOrEmpty())
-            {
-                return;
-            }
+            if (TargetTypes.IsNullOrEmpty()) return;
 
             foreach (var targetType in TargetTypes)
             {

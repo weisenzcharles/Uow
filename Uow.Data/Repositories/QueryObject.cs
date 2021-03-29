@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Uow.Core.Domain.Repositories;
 using LinqKit;
+using Uow.Core.Domain.Repositories;
 
 namespace Uow.Data.Repositories
 {

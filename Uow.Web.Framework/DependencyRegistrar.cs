@@ -1,7 +1,7 @@
-﻿using Autofac;
-using Autofac.Integration.Mvc;
-using System.Linq;
+﻿using System.Linq;
 using System.Web;
+using Autofac;
+using Autofac.Integration.Mvc;
 using Uow.Core.Dependency;
 using Uow.Core.Domain.DataContext;
 using Uow.Core.Domain.Repositories;
@@ -17,12 +17,10 @@ using Uow.Services;
 namespace Uow.Web.Framework
 {
     /// <summary>
-    /// Dependency registrar
+    ///     Dependency registrar
     /// </summary>
     public class DependencyRegistrar : IDependencyRegistrar
     {
-
-
         public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
         {
             // System.Diagnostics.Debugger.Break();
@@ -30,13 +28,17 @@ namespace Uow.Web.Framework
             // HTTP context and other related stuff
             builder.Register(c =>
                 // register FakeHttpContext when HttpContext is not available
-                HttpContext.Current != null ?
-                (new HttpContextWrapper(HttpContext.Current) as HttpContextBase) :
-                (new FakeHttpContext("~/") as HttpContextBase)).As<HttpContextBase>().InstancePerLifetimeScope();
-            builder.Register(c => c.Resolve<HttpContextBase>().Request).As<HttpRequestBase>().InstancePerLifetimeScope();
-            builder.Register(c => c.Resolve<HttpContextBase>().Response).As<HttpResponseBase>().InstancePerLifetimeScope();
-            builder.Register(c => c.Resolve<HttpContextBase>().Server).As<HttpServerUtilityBase>().InstancePerLifetimeScope();
-            builder.Register(c => c.Resolve<HttpContextBase>().Session).As<HttpSessionStateBase>().InstancePerLifetimeScope();
+                HttpContext.Current != null
+                    ? new HttpContextWrapper(HttpContext.Current) as HttpContextBase
+                    : new FakeHttpContext("~/") as HttpContextBase).As<HttpContextBase>().InstancePerLifetimeScope();
+            builder.Register(c => c.Resolve<HttpContextBase>().Request).As<HttpRequestBase>()
+                .InstancePerLifetimeScope();
+            builder.Register(c => c.Resolve<HttpContextBase>().Response).As<HttpResponseBase>()
+                .InstancePerLifetimeScope();
+            builder.Register(c => c.Resolve<HttpContextBase>().Server).As<HttpServerUtilityBase>()
+                .InstancePerLifetimeScope();
+            builder.Register(c => c.Resolve<HttpContextBase>().Session).As<HttpSessionStateBase>()
+                .InstancePerLifetimeScope();
 
             // controllers
             builder.RegisterControllers(typeFinder.GetAssemblies().ToArray());
@@ -58,11 +60,8 @@ namespace Uow.Web.Framework
         }
 
         /// <summary>
-        /// Order of this dependency registrar implementation
+        ///     Order of this dependency registrar implementation
         /// </summary>
-        public int Order
-        {
-            get { return 0; }
-        }
+        public int Order => 0;
     }
 }

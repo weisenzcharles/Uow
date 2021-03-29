@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Uow.Core.Domain.Repositories;
 using Uow.Domain;
+
 namespace Uow.Web.Controllers
 {
     public class HomeController : Controller
     {
-
         private readonly IRepositoryAsync<UserDomain> _repository;
 
         //public HomeController()
@@ -24,7 +22,7 @@ namespace Uow.Web.Controllers
 
         public ActionResult Index()
         {
-            List<UserDomain> users = new List<UserDomain>();
+            var users = new List<UserDomain>();
             users = _repository.Queryable(false).ToList();
 
             return View();

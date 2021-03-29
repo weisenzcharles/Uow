@@ -4,26 +4,21 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using LinqKit;
 using Uow.Core.Domain.DataContext;
 using Uow.Core.Domain.Repositories;
 using Uow.Core.Domain.Uow;
 using Uow.Core.Infrastructure;
 using Uow.Data.DataContext;
-using LinqKit;
+
 namespace Uow.Data.Repositories
 {
     public class Repository<TEntity> : IRepositoryAsync<TEntity> where TEntity : class, IObjectState
     {
-        #region Private Fields
-
-        private readonly IDataContextAsync _context;
-        private readonly DbSet<TEntity> _dbSet;
-        private readonly IUnitOfWorkAsync _unitOfWork;
-
-        #endregion Private Fields
+        private HashSet<object>
+            _entitesChecked; // tracking of all process entities in the object graph when calling SyncObjectGraph
 
         public Repository(IDataContextAsync context, IUnitOfWorkAsync unitOfWork)
         {
@@ -41,10 +36,7 @@ namespace Uow.Data.Repositories
             {
                 var fakeContext = context as FakeDbContext;
 
-                if (fakeContext != null)
-                {
-                    _dbSet = fakeContext.Set<TEntity>();
-                }
+                if (fakeContext != null) _dbSet = fakeContext.Set<TEntity>();
             }
         }
 
@@ -60,17 +52,15 @@ namespace Uow.Data.Repositories
 
         public virtual void Insert(TEntity entity)
         {
-            entity.ObjectState = EntityState.Added; ;
+            entity.ObjectState = EntityState.Added;
+            ;
             _dbSet.Attach(entity);
             _context.SyncObjectState(entity);
         }
 
         public virtual void InsertRange(IEnumerable<TEntity> entities)
         {
-            foreach (var entity in entities)
-            {
-                Insert(entity);
-            }
+            foreach (var entity in entities) Insert(entity);
         }
 
         public virtual void InsertGraphRange(IEnumerable<TEntity> entities)
@@ -112,10 +102,12 @@ namespace Uow.Data.Repositories
         {
             return new QueryFluent<TEntity>(this, query);
         }
+
         public IQueryable<TEntity> Queryable()
         {
-            return this.Queryable(true);
+            return Queryable(true);
         }
+
         public IQueryable<TEntity> Queryable(bool isTracking)
         {
             //cache DBSet by connection
@@ -170,15 +162,19 @@ namespace Uow.Data.Repositories
         {
             var entity = await FindAsync(cancellationToken, keyValues);
 
-            if (entity == null)
-            {
-                return false;
-            }
+            if (entity == null) return false;
 
             entity.ObjectState = EntityState.Deleted;
             _dbSet.Attach(entity);
 
             return true;
+        }
+
+        public virtual void InsertOrUpdateGraph(TEntity entity)
+        {
+            SyncObjectGraph(entity);
+            _entitesChecked = null;
+            _dbSet.Attach(entity);
         }
 
         internal IQueryable<TEntity> Select(
@@ -190,22 +186,11 @@ namespace Uow.Data.Repositories
         {
             IQueryable<TEntity> query = _dbSet;
 
-            if (includes != null)
-            {
-                query = includes.Aggregate(query, (current, include) => current.Include(include));
-            }
-            if (orderBy != null)
-            {
-                query = orderBy(query);
-            }
-            if (filter != null)
-            {
-                query = query.AsExpandable().Where(filter);
-            }
+            if (includes != null) query = includes.Aggregate(query, (current, include) => current.Include(include));
+            if (orderBy != null) query = orderBy(query);
+            if (filter != null) query = query.AsExpandable().Where(filter);
             if (page != null && pageSize != null)
-            {
                 query = query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
-            }
             return query;
         }
 
@@ -218,15 +203,6 @@ namespace Uow.Data.Repositories
         {
             return await Select(filter, orderBy, includes, page, pageSize).ToListAsync();
         }
-
-        public virtual void InsertOrUpdateGraph(TEntity entity)
-        {
-            SyncObjectGraph(entity);
-            _entitesChecked = null;
-            _dbSet.Attach(entity);
-        }
-
-        HashSet<object> _entitesChecked; // tracking of all process entities in the object graph when calling SyncObjectGraph
 
         private void SyncObjectGraph(object entity) // scan object graph for all 
         {
@@ -241,7 +217,7 @@ namespace Uow.Data.Repositories
             var objectState = entity as IObjectState;
 
             if (objectState != null && objectState.ObjectState == EntityState.Added)
-                _context.SyncObjectState((IObjectState)entity);
+                _context.SyncObjectState((IObjectState) entity);
 
             // Set tracking state for child collections
             foreach (var prop in entity.GetType().GetProperties())
@@ -251,7 +227,7 @@ namespace Uow.Data.Repositories
                 if (trackableRef != null)
                 {
                     if (trackableRef.ObjectState == EntityState.Added)
-                        _context.SyncObjectState((IObjectState)entity);
+                        _context.SyncObjectState((IObjectState) entity);
 
                     SyncObjectGraph(prop.GetValue(entity, null));
                 }
@@ -266,5 +242,13 @@ namespace Uow.Data.Repositories
                     SyncObjectGraph(item);
             }
         }
+
+        #region Private Fields
+
+        private readonly IDataContextAsync _context;
+        private readonly DbSet<TEntity> _dbSet;
+        private readonly IUnitOfWorkAsync _unitOfWork;
+
+        #endregion Private Fields
     }
 }

@@ -5,20 +5,16 @@ namespace Uow.Core.Fakes
 {
     public class FakePrincipal : IPrincipal
     {
-        private readonly IIdentity _identity;
         private readonly string[] _roles;
 
         public FakePrincipal(IIdentity identity, string[] roles)
         {
-            _identity = identity;
+            Identity = identity;
             _roles = roles;
         }
 
 
-        public IIdentity Identity
-        {
-            get { return _identity; }
-        }
+        public IIdentity Identity { get; }
 
         public bool IsInRole(string role)
         {

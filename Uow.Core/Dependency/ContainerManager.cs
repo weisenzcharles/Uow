@@ -1,44 +1,34 @@
-﻿using Autofac;
-using Autofac.Core.Lifetime;
-using Autofac.Integration.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
+using Autofac;
+using Autofac.Core.Lifetime;
+using Autofac.Integration.Mvc;
 
 namespace Uow.Core.Dependency
 {
     /// <summary>
-    /// Container manager
+    ///     Container manager
     /// </summary>
     public class ContainerManager
     {
-        private readonly IContainer _container;
-
         /// <summary>
-        /// Constructor
+        ///     Constructor
         /// </summary>
         /// <param name="container">Conainer</param>
         public ContainerManager(IContainer container)
         {
-            this._container = container;
+            Container = container;
         }
 
         /// <summary>
-        /// Gets a container
+        ///     Gets a container
         /// </summary>
-        public virtual IContainer Container
-        {
-            get
-            {
-                return _container;
-            }
-        }
+        public virtual IContainer Container { get; }
 
         /// <summary>
-        /// Resolve
+        ///     Resolve
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
         /// <param name="key">key</param>
@@ -47,19 +37,14 @@ namespace Uow.Core.Dependency
         public virtual T Resolve<T>(string key = "", ILifetimeScope scope = null) where T : class
         {
             if (scope == null)
-            {
                 //no scope specified
                 scope = Scope();
-            }
-            if (string.IsNullOrEmpty(key))
-            {
-                return scope.Resolve<T>();
-            }
+            if (string.IsNullOrEmpty(key)) return scope.Resolve<T>();
             return scope.ResolveKeyed<T>(key);
         }
 
         /// <summary>
-        /// Resolve
+        ///     Resolve
         /// </summary>
         /// <param name="type">Type</param>
         /// <param name="scope">Scope; pass null to automatically resolve the current scope</param>
@@ -67,15 +52,13 @@ namespace Uow.Core.Dependency
         public virtual object Resolve(Type type, ILifetimeScope scope = null)
         {
             if (scope == null)
-            {
                 //no scope specified
                 scope = Scope();
-            }
             return scope.Resolve(type);
         }
 
         /// <summary>
-        /// Resolve all
+        ///     Resolve all
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
         /// <param name="key">key</param>
@@ -84,19 +67,14 @@ namespace Uow.Core.Dependency
         public virtual T[] ResolveAll<T>(string key = "", ILifetimeScope scope = null)
         {
             if (scope == null)
-            {
                 //no scope specified
                 scope = Scope();
-            }
-            if (string.IsNullOrEmpty(key))
-            {
-                return scope.Resolve<IEnumerable<T>>().ToArray();
-            }
+            if (string.IsNullOrEmpty(key)) return scope.Resolve<IEnumerable<T>>().ToArray();
             return scope.ResolveKeyed<IEnumerable<T>>(key).ToArray();
         }
 
         /// <summary>
-        /// Resolve unregistered service
+        ///     Resolve unregistered service
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
         /// <param name="scope">Scope; pass null to automatically resolve the current scope</param>
@@ -107,7 +85,7 @@ namespace Uow.Core.Dependency
         }
 
         /// <summary>
-        /// Resolve unregistered service
+        ///     Resolve unregistered service
         /// </summary>
         /// <param name="type">Type</param>
         /// <param name="scope">Scope; pass null to automatically resolve the current scope</param>
@@ -115,13 +93,10 @@ namespace Uow.Core.Dependency
         public virtual object ResolveUnregistered(Type type, ILifetimeScope scope = null)
         {
             if (scope == null)
-            {
                 //no scope specified
                 scope = Scope();
-            }
             var constructors = type.GetConstructors();
             foreach (var constructor in constructors)
-            {
                 try
                 {
                     var parameters = constructor.GetParameters();
@@ -132,18 +107,18 @@ namespace Uow.Core.Dependency
                         if (service == null) throw new UowException("Unkown dependency");
                         parameterInstances.Add(service);
                     }
+
                     return Activator.CreateInstance(type, parameterInstances.ToArray());
                 }
                 catch (UowException)
                 {
-
                 }
-            }
+
             throw new UowException("No contructor was found that had all the dependencies satisfied.");
         }
 
         /// <summary>
-        /// Try to resolve srevice
+        ///     Try to resolve srevice
         /// </summary>
         /// <param name="serviceType">Type</param>
         /// <param name="scope">Scope; pass null to automatically resolve the current scope</param>
@@ -152,15 +127,13 @@ namespace Uow.Core.Dependency
         public virtual bool TryResolve(Type serviceType, ILifetimeScope scope, out object instance)
         {
             if (scope == null)
-            {
                 //no scope specified
                 scope = Scope();
-            }
             return scope.TryResolve(serviceType, out instance);
         }
 
         /// <summary>
-        /// Check whether some service is registered (can be resolved)
+        ///     Check whether some service is registered (can be resolved)
         /// </summary>
         /// <param name="serviceType">Type</param>
         /// <param name="scope">Scope; pass null to automatically resolve the current scope</param>
@@ -168,15 +141,13 @@ namespace Uow.Core.Dependency
         public virtual bool IsRegistered(Type serviceType, ILifetimeScope scope = null)
         {
             if (scope == null)
-            {
                 //no scope specified
                 scope = Scope();
-            }
             return scope.IsRegistered(serviceType);
         }
 
         /// <summary>
-        /// Resolve optional
+        ///     Resolve optional
         /// </summary>
         /// <param name="serviceType">Type</param>
         /// <param name="scope">Scope; pass null to automatically resolve the current scope</param>
@@ -184,15 +155,13 @@ namespace Uow.Core.Dependency
         public virtual object ResolveOptional(Type serviceType, ILifetimeScope scope = null)
         {
             if (scope == null)
-            {
                 //no scope specified
                 scope = Scope();
-            }
             return scope.ResolveOptional(serviceType);
         }
 
         /// <summary>
-        /// Get current scope
+        ///     Get current scope
         /// </summary>
         /// <returns>Scope</returns>
         public virtual ILifetimeScope Scope()

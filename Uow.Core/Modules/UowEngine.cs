@@ -1,12 +1,10 @@
-﻿using Autofac;
-using Autofac.Integration.Mvc;
-using AutoMapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
+using Autofac;
+using Autofac.Integration.Mvc;
+using AutoMapper;
 using Uow.Core.AutoMapper;
 using Uow.Core.Dependency;
 using Uow.Core.Infrastructure;
@@ -14,7 +12,7 @@ using Uow.Core.Infrastructure;
 namespace Uow.Core.Modules
 {
     /// <summary>
-    /// Engine
+    ///     Engine
     /// </summary>
     public class UowEngine : IEngine
     {
@@ -24,10 +22,19 @@ namespace Uow.Core.Modules
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        ///     Container manager
+        /// </summary>
+        public virtual ContainerManager ContainerManager => _containerManager;
+
+        #endregion
+
         #region Utilities
 
         /// <summary>
-        /// Run startup tasks
+        ///     Run startup tasks
         /// </summary>
         protected virtual void RunStartupTasks()
         {
@@ -43,9 +50,9 @@ namespace Uow.Core.Modules
         }
 
         /// <summary>
-        /// Register dependencies
+        ///     Register dependencies
         /// </summary>
-        protected virtual void RegisterDependencies(/*NopConfig config*/)
+        protected virtual void RegisterDependencies( /*NopConfig config*/)
         {
             var builder = new ContainerBuilder();
 
@@ -59,24 +66,24 @@ namespace Uow.Core.Modules
             var drTypes = typeFinder.FindClassesOfType<IDependencyRegistrar>();
             var drInstances = new List<IDependencyRegistrar>();
             foreach (var drType in drTypes)
-                drInstances.Add((IDependencyRegistrar)Activator.CreateInstance(drType));
+                drInstances.Add((IDependencyRegistrar) Activator.CreateInstance(drType));
             //sort
             drInstances = drInstances.AsQueryable().OrderBy(t => t.Order).ToList();
             foreach (var dependencyRegistrar in drInstances)
-                dependencyRegistrar.Register(builder, typeFinder/*, config*/);
+                dependencyRegistrar.Register(builder, typeFinder /*, config*/);
 
             var container = builder.Build();
-            this._containerManager = new ContainerManager(container);
+            _containerManager = new ContainerManager(container);
 
             //set dependency resolver
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }
 
         /// <summary>
-        /// Register mapping
+        ///     Register mapping
         /// </summary>
         /// <param name="config">Config</param>
-        protected virtual void RegisterMapperConfiguration(/*NopConfig config*/)
+        protected virtual void RegisterMapperConfiguration( /*NopConfig config*/)
         {
             //dependencies
             var typeFinder = new WebAppTypeFinder();
@@ -85,7 +92,7 @@ namespace Uow.Core.Modules
             var mcTypes = typeFinder.FindClassesOfType<IMapperConfiguration>();
             var mcInstances = new List<IMapperConfiguration>();
             foreach (var mcType in mcTypes)
-                mcInstances.Add((IMapperConfiguration)Activator.CreateInstance(mcType));
+                mcInstances.Add((IMapperConfiguration) Activator.CreateInstance(mcType));
             //sort
             mcInstances = mcInstances.AsQueryable().OrderBy(t => t.Order).ToList();
             //get configurations
@@ -102,27 +109,26 @@ namespace Uow.Core.Modules
         #region Methods
 
         /// <summary>
-        /// Initialize components and plugins in the nop environment.
+        ///     Initialize components and plugins in the nop environment.
         /// </summary>
         /// <param name="config">Config</param>
-        public void Initialize(/*NopConfig config*/)
+        public void Initialize( /*NopConfig config*/)
         {
             //register dependencies
-            RegisterDependencies(/*config*/);
+            RegisterDependencies( /*config*/);
 
             //register mapper configurations
-            RegisterMapperConfiguration(/*config*/);
+            RegisterMapperConfiguration( /*config*/);
 
             //startup tasks
             //if (!config.IgnoreStartupTasks)
             //{
             //   RunStartupTasks();
             //}
-
         }
 
         /// <summary>
-        /// Resolve dependency
+        ///     Resolve dependency
         /// </summary>
         /// <typeparam name="T">T</typeparam>
         /// <returns></returns>
@@ -132,7 +138,7 @@ namespace Uow.Core.Modules
         }
 
         /// <summary>
-        ///  Resolve dependency
+        ///     Resolve dependency
         /// </summary>
         /// <param name="type">Type</param>
         /// <returns></returns>
@@ -142,7 +148,7 @@ namespace Uow.Core.Modules
         }
 
         /// <summary>
-        /// Resolve dependencies
+        ///     Resolve dependencies
         /// </summary>
         /// <typeparam name="T">T</typeparam>
         /// <returns></returns>
@@ -152,18 +158,5 @@ namespace Uow.Core.Modules
         }
 
         #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Container manager
-        /// </summary>
-        public virtual ContainerManager ContainerManager
-        {
-            get { return _containerManager; }
-        }
-
-        #endregion
-
     }
 }

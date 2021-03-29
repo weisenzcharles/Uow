@@ -11,20 +11,14 @@ namespace Uow.Core.Fakes
     {
         private readonly HttpCookieCollection _cookies;
         private readonly NameValueCollection _formParams;
-        private IPrincipal _principal;
+        private readonly string _method;
         private readonly NameValueCollection _queryStringParams;
         private readonly string _relativeUrl;
-        private readonly string _method;
-        private readonly SessionStateItemCollection _sessionItems;
         private readonly NameValueCollection _serverVariables;
-        private HttpResponseBase _response;
+        private readonly SessionStateItemCollection _sessionItems;
+        private IPrincipal _principal;
         private HttpRequestBase _request;
-        private readonly IDictionary _items;
-
-        public static FakeHttpContext Root()
-        {
-            return new FakeHttpContext("~/");
-        }
+        private HttpResponseBase _response;
 
         public FakeHttpContext(string relativeUrl, string method)
             : this(relativeUrl, method, null, null, null, null, null, null)
@@ -58,16 +52,31 @@ namespace Uow.Core.Fakes
             _sessionItems = sessionItems;
             _serverVariables = serverVariables;
 
-            _items = new Hashtable();
+            Items = new Hashtable();
         }
 
-        public override HttpRequestBase Request
+        public override HttpRequestBase Request =>
+            _request ??
+            new FakeHttpRequest(_relativeUrl, _method, _formParams, _queryStringParams, _cookies, _serverVariables);
+
+        public override HttpResponseBase Response => _response ?? new FakeHttpResponse();
+
+        public override IPrincipal User
         {
-            get
-            {
-                return _request ??
-                       new FakeHttpRequest(_relativeUrl, _method, _formParams, _queryStringParams, _cookies, _serverVariables);
-            }
+            get => _principal;
+            set => _principal = value;
+        }
+
+        public override HttpSessionStateBase Session => new FakeHttpSessionState(_sessionItems);
+
+        public override IDictionary Items { get; }
+
+
+        public override bool SkipAuthorization { get; set; }
+
+        public static FakeHttpContext Root()
+        {
+            return new FakeHttpContext("~/");
         }
 
         public void SetRequest(HttpRequestBase request)
@@ -75,40 +84,10 @@ namespace Uow.Core.Fakes
             _request = request;
         }
 
-        public override HttpResponseBase Response
-        {
-            get
-            {
-                return _response ?? new FakeHttpResponse();
-            }
-        }
-
         public void SetResponse(HttpResponseBase response)
         {
             _response = response;
         }
-
-        public override IPrincipal User
-        {
-            get { return _principal; }
-            set { _principal = value; }
-        }
-
-        public override HttpSessionStateBase Session
-        {
-            get { return new FakeHttpSessionState(_sessionItems); }
-        }
-
-        public override IDictionary Items
-        {
-            get
-            {
-                return _items;
-            }
-        }
-
-
-        public override bool SkipAuthorization { get; set; }
 
         public override object GetService(Type serviceType)
         {

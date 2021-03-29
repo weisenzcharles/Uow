@@ -5,27 +5,15 @@ namespace Uow.Core.Fakes
 {
     public class FakeIdentity : IIdentity
     {
-        private readonly string _name;
-
         public FakeIdentity(string userName)
         {
-            _name = userName;
+            Name = userName;
         }
 
-        public string AuthenticationType
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public string AuthenticationType => throw new NotImplementedException();
 
-        public bool IsAuthenticated
-        {
-            get { return !String.IsNullOrEmpty(_name); }
-        }
+        public bool IsAuthenticated => !string.IsNullOrEmpty(Name);
 
-        public string Name
-        {
-            get { return _name; }
-        }
-
+        public string Name { get; }
     }
 }

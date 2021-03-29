@@ -1,23 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Uow.Core.Domain.DataContext;
-using Uow.Core.Infrastructure;
 
 namespace Uow.Data.DataContext
 {
-
     /// <summary>
-    /// A DbContext instance represents a combination of the Unit Of Work and Repository
-    /// patterns such that it can be used to query from a database and group together
-    /// changes that will then be written back to the store as a unit. DbContext is conceptually
-    /// similar to ObjectContext.
+    ///     A DbContext instance represents a combination of the Unit Of Work and Repository
+    ///     patterns such that it can be used to query from a database and group together
+    ///     changes that will then be written back to the store as a unit. DbContext is conceptually
+    ///     similar to ObjectContext.
     /// </summary>
     public class UowDbContext : DataContext
     {
@@ -27,58 +22,19 @@ namespace Uow.Data.DataContext
 
         #endregion
 
-        #region Constructors
-
         /// <summary>
-        /// Constructs a new context instance using conventions to create the name of the
-        /// database to which a connection will be made. The by-convention name is the full
-        /// name (namespace + class name) of the derived context class. See the class remarks
-        /// for how this is used to create a connection.
-        /// </summary>
-        static UowDbContext()
-        {
-            Database.SetInitializer<UowDbContext>(null);
-            //Database.SetInitializer(new CreateDatabaseIfNotExists<UowDbContext>());
-        }
-
-        /// <summary>
-        /// Constructs a new context instance using conventions to create the name of the
-        /// database to which a connection will be made. The by-convention name is the full
-        /// name (namespace + class name) of the derived context class. See the class remarks
-        /// for how this is used to create a connection.
-        /// </summary>
-        public UowDbContext()
-            : base("Default")
-        {
-            Configuration.ProxyCreationEnabled = false;
-            Configuration.LazyLoadingEnabled = false;
-        }
-
-        /// <summary>
-        /// Constructs a new context instance using the given string as the name or connection
-        /// string for the database to which a connection will be made. See the class remarks
-        /// for how this is used to create a connection.
-        /// </summary>
-        /// <param name="nameOrConnectionString">Either the database name or a connection string.</param>
-        public UowDbContext(string nameOrConnectionString) : base(nameOrConnectionString)
-        {
-            Configuration.LazyLoadingEnabled = false;
-            Configuration.ProxyCreationEnabled = false;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// 在完成对派生上下文的模型的初始化后，并在该模型已锁定并用于初始化上下文之前，将调用此方法。
-        /// 虽然此方法的默认实现不执行任何操作，但可在派生类中重写此方法，这样便能在锁定模型之前对其进行进一步的配置。
+        ///     在完成对派生上下文的模型的初始化后，并在该模型已锁定并用于初始化上下文之前，将调用此方法。
+        ///     虽然此方法的默认实现不执行任何操作，但可在派生类中重写此方法，这样便能在锁定模型之前对其进行进一步的配置。
         /// </summary>
         /// <param name="modelBuilder">定义要创建的上下文的模型的生成器。</param>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             // dynamically load all configuration
             var typesToRegister = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(type => !String.IsNullOrEmpty(type.Namespace))
-            .Where(type => type.BaseType != null && type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == typeof(EntityTypeConfiguration<>));
+                .Where(type => !string.IsNullOrEmpty(type.Namespace))
+                .Where(type =>
+                    type.BaseType != null && type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() ==
+                    typeof(EntityTypeConfiguration<>));
             foreach (var type in typesToRegister)
             {
                 dynamic configurationInstance = Activator.CreateInstance(type);
@@ -100,22 +56,28 @@ namespace Uow.Data.DataContext
         ///     Saves all changes made in this context to the underlying database.
         /// </summary>
         /// <exception cref="System.Data.Entity.Infrastructure.DbUpdateException">
-        ///     An error occurred sending updates to the database.</exception>
+        ///     An error occurred sending updates to the database.
+        /// </exception>
         /// <exception cref="System.Data.Entity.Infrastructure.DbUpdateConcurrencyException">
         ///     A database command did not affect the expected number of rows. This usually
         ///     indicates an optimistic concurrency violation; that is, a row has been changed
-        ///     in the database since it was queried.</exception>
+        ///     in the database since it was queried.
+        /// </exception>
         /// <exception cref="System.Data.Entity.Validation.DbEntityValidationException">
-        ///     The save was aborted because validation of entity property values failed.</exception>
+        ///     The save was aborted because validation of entity property values failed.
+        /// </exception>
         /// <exception cref="System.NotSupportedException">
         ///     An attempt was made to use unsupported behavior such as executing multiple
-        ///     asynchronous commands concurrently on the same context instance.</exception>
+        ///     asynchronous commands concurrently on the same context instance.
+        /// </exception>
         /// <exception cref="System.ObjectDisposedException">
-        ///     The context or connection have been disposed.</exception>
+        ///     The context or connection have been disposed.
+        /// </exception>
         /// <exception cref="System.InvalidOperationException">
         ///     Some error occurred attempting to process entities in the context either
-        ///     before or after sending commands to the database.</exception>
-        /// <seealso cref="DbContext.SaveChanges"/>
+        ///     before or after sending commands to the database.
+        /// </exception>
+        /// <seealso cref="DbContext.SaveChanges" />
         /// <returns>The number of objects written to the underlying database.</returns>
         public override int SaveChanges()
         {
@@ -129,52 +91,69 @@ namespace Uow.Data.DataContext
         ///     Asynchronously saves all changes made in this context to the underlying database.
         /// </summary>
         /// <exception cref="System.Data.Entity.Infrastructure.DbUpdateException">
-        ///     An error occurred sending updates to the database.</exception>
+        ///     An error occurred sending updates to the database.
+        /// </exception>
         /// <exception cref="System.Data.Entity.Infrastructure.DbUpdateConcurrencyException">
         ///     A database command did not affect the expected number of rows. This usually
         ///     indicates an optimistic concurrency violation; that is, a row has been changed
-        ///     in the database since it was queried.</exception>
+        ///     in the database since it was queried.
+        /// </exception>
         /// <exception cref="System.Data.Entity.Validation.DbEntityValidationException">
-        ///     The save was aborted because validation of entity property values failed.</exception>
+        ///     The save was aborted because validation of entity property values failed.
+        /// </exception>
         /// <exception cref="System.NotSupportedException">
         ///     An attempt was made to use unsupported behavior such as executing multiple
-        ///     asynchronous commands concurrently on the same context instance.</exception>
+        ///     asynchronous commands concurrently on the same context instance.
+        /// </exception>
         /// <exception cref="System.ObjectDisposedException">
-        ///     The context or connection have been disposed.</exception>
+        ///     The context or connection have been disposed.
+        /// </exception>
         /// <exception cref="System.InvalidOperationException">
         ///     Some error occurred attempting to process entities in the context either
-        ///     before or after sending commands to the database.</exception>
-        /// <seealso cref="DbContext.SaveChangesAsync"/>
-        /// <returns>A task that represents the asynchronous save operation.  The 
-        ///     <see cref="Task.Result">Task.Result</see> contains the number of 
-        ///     objects written to the underlying database.</returns>
+        ///     before or after sending commands to the database.
+        /// </exception>
+        /// <seealso cref="DbContext.SaveChangesAsync" />
+        /// <returns>
+        ///     A task that represents the asynchronous save operation.  The
+        ///     <see cref="Task.Result">Task.Result</see> contains the number of
+        ///     objects written to the underlying database.
+        /// </returns>
         public override async Task<int> SaveChangesAsync()
         {
             return await SaveChangesAsync(CancellationToken.None);
         }
+
         /// <summary>
         ///     Asynchronously saves all changes made in this context to the underlying database.
         /// </summary>
         /// <exception cref="System.Data.Entity.Infrastructure.DbUpdateException">
-        ///     An error occurred sending updates to the database.</exception>
+        ///     An error occurred sending updates to the database.
+        /// </exception>
         /// <exception cref="System.Data.Entity.Infrastructure.DbUpdateConcurrencyException">
         ///     A database command did not affect the expected number of rows. This usually
         ///     indicates an optimistic concurrency violation; that is, a row has been changed
-        ///     in the database since it was queried.</exception>
+        ///     in the database since it was queried.
+        /// </exception>
         /// <exception cref="System.Data.Entity.Validation.DbEntityValidationException">
-        ///     The save was aborted because validation of entity property values failed.</exception>
+        ///     The save was aborted because validation of entity property values failed.
+        /// </exception>
         /// <exception cref="System.NotSupportedException">
         ///     An attempt was made to use unsupported behavior such as executing multiple
-        ///     asynchronous commands concurrently on the same context instance.</exception>
+        ///     asynchronous commands concurrently on the same context instance.
+        /// </exception>
         /// <exception cref="System.ObjectDisposedException">
-        ///     The context or connection have been disposed.</exception>
+        ///     The context or connection have been disposed.
+        /// </exception>
         /// <exception cref="System.InvalidOperationException">
         ///     Some error occurred attempting to process entities in the context either
-        ///     before or after sending commands to the database.</exception>
-        /// <seealso cref="DbContext.SaveChangesAsync"/>
-        /// <returns>A task that represents the asynchronous save operation.  The 
-        ///     <see cref="Task.Result">Task.Result</see> contains the number of 
-        ///     objects written to the underlying database.</returns>
+        ///     before or after sending commands to the database.
+        /// </exception>
+        /// <seealso cref="DbContext.SaveChangesAsync" />
+        /// <returns>
+        ///     A task that represents the asynchronous save operation.  The
+        ///     <see cref="Task.Result">Task.Result</see> contains the number of
+        ///     objects written to the underlying database.
+        /// </returns>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             //SyncObjectsStatePreCommit();
@@ -220,9 +199,9 @@ namespace Uow.Data.DataContext
         //}
 
         /// <summary>
-        /// 释放上下文。
-        /// 在以下情况下也将释放基础 System.Data.Entity.Core.Objects.ObjectContext：它由此上下文创建，或者在创建此上下文时将所有权传递给了此上下文。
-        /// 在以下情况下也将释放与数据库的连接（System.Data.Common.DbConnection 对象）：它由此上下文创建，或者在创建此上下文时将所有权传递给了此上下文。
+        ///     释放上下文。
+        ///     在以下情况下也将释放基础 System.Data.Entity.Core.Objects.ObjectContext：它由此上下文创建，或者在创建此上下文时将所有权传递给了此上下文。
+        ///     在以下情况下也将释放与数据库的连接（System.Data.Common.DbConnection 对象）：它由此上下文创建，或者在创建此上下文时将所有权传递给了此上下文。
         /// </summary>
         /// <param name="disposing">如果为 true，则同时释放托管资源和非托管资源；如果为 false，则仅释放非托管资源。</param>
         protected override void Dispose(bool disposing)
@@ -243,5 +222,46 @@ namespace Uow.Data.DataContext
 
             base.Dispose(disposing);
         }
+
+        #region Constructors
+
+        /// <summary>
+        ///     Constructs a new context instance using conventions to create the name of the
+        ///     database to which a connection will be made. The by-convention name is the full
+        ///     name (namespace + class name) of the derived context class. See the class remarks
+        ///     for how this is used to create a connection.
+        /// </summary>
+        static UowDbContext()
+        {
+            Database.SetInitializer<UowDbContext>(null);
+            //Database.SetInitializer(new CreateDatabaseIfNotExists<UowDbContext>());
+        }
+
+        /// <summary>
+        ///     Constructs a new context instance using conventions to create the name of the
+        ///     database to which a connection will be made. The by-convention name is the full
+        ///     name (namespace + class name) of the derived context class. See the class remarks
+        ///     for how this is used to create a connection.
+        /// </summary>
+        public UowDbContext()
+            : base("Default")
+        {
+            Configuration.ProxyCreationEnabled = false;
+            Configuration.LazyLoadingEnabled = false;
+        }
+
+        /// <summary>
+        ///     Constructs a new context instance using the given string as the name or connection
+        ///     string for the database to which a connection will be made. See the class remarks
+        ///     for how this is used to create a connection.
+        /// </summary>
+        /// <param name="nameOrConnectionString">Either the database name or a connection string.</param>
+        public UowDbContext(string nameOrConnectionString) : base(nameOrConnectionString)
+        {
+            Configuration.LazyLoadingEnabled = false;
+            Configuration.ProxyCreationEnabled = false;
+        }
+
+        #endregion
     }
 }

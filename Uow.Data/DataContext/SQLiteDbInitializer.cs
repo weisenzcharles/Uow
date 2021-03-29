@@ -1,10 +1,5 @@
-﻿using SQLite.CodeFirst;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
+using SQLite.CodeFirst;
 using Uow.Core.Infrastructure;
 
 namespace Uow.Data.DataContext
@@ -12,8 +7,9 @@ namespace Uow.Data.DataContext
     public class SQLiteDbInitializer : SqliteDropCreateDatabaseWhenModelChanges<SQLiteDbContext>
     {
         public SQLiteDbInitializer(DbModelBuilder modelBuilder)
-          : base(modelBuilder, typeof(IObjectState))
-        { }
+            : base(modelBuilder, typeof(IObjectState))
+        {
+        }
 
         protected override void Seed(SQLiteDbContext context)
         {

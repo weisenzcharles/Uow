@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Uow.Core.Domain.DataContext;
@@ -13,8 +11,10 @@ namespace Uow.Data.DataContext
 {
     public abstract class FakeDbContext : IFakeDbContext
     {
-        #region Private Fields  
+        #region Private Fields
+
         private readonly Dictionary<Type, object> _fakeDbSets;
+
         #endregion Private Fields
 
         protected FakeDbContext()
@@ -22,7 +22,10 @@ namespace Uow.Data.DataContext
             _fakeDbSets = new Dictionary<Type, object>();
         }
 
-        public int SaveChanges() { return default(int); }
+        public int SaveChanges()
+        {
+            return default;
+        }
 
         public void SyncObjectState<TEntity>(TEntity entity) where TEntity : class, IObjectState
         {
@@ -30,13 +33,24 @@ namespace Uow.Data.DataContext
             // there is no actual DbContext to sync with, please look at the Integration Tests for test that will run against an actual database.
         }
 
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken) { return new Task<int>(() => default(int)); }
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            return new Task<int>(() => default);
+        }
 
-        public Task<int> SaveChangesAsync() { return new Task<int>(() => default(int)); }
+        public Task<int> SaveChangesAsync()
+        {
+            return new Task<int>(() => default);
+        }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+        }
 
-        public DbSet<T> Set<T>() where T : class { return (DbSet<T>)_fakeDbSets[typeof(T)]; }
+        public DbSet<T> Set<T>() where T : class
+        {
+            return (DbSet<T>) _fakeDbSets[typeof(T)];
+        }
 
         public void AddFakeDbSet<TEntity, TFakeDbSet>()
             where TEntity : EntityBase, new()

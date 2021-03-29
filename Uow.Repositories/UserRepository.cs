@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Uow.Core.Domain.Repositories;
 using Uow.Domain;
 
@@ -10,11 +7,10 @@ namespace Uow.Repositories
 {
     public class UserRepository : IUserRepository
     {
-
         private readonly IRepositoryAsync<UserDomain> _repository;
 
         /// <summary>
-        /// 初始化 <see cref="UserRepository"/> 类的新实例。
+        ///     初始化 <see cref="UserRepository" /> 类的新实例。
         /// </summary>
         public UserRepository(IRepositoryAsync<UserDomain> userRepository)
         {
@@ -32,7 +28,5 @@ namespace Uow.Repositories
             users = _repository.Queryable(false).ToList();
             return users;
         }
-
-
     }
 }
